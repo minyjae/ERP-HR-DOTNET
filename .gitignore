@@ -1,0 +1,40 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# .NET
+*.user
+*.suo
+*.userosscache
+*.dll
+*.pdb
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider / VS / VS Code
+.vs/
+.idea/
+.vscode/
+*.swp
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# User-specific / secrets
+appsettings.*.local.json
+*.local.json
+secrets.json
+.env
+
+# OS
+.DS_Store
+Thumbs.db
