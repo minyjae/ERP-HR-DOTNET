@@ -1,0 +1,52 @@
+@ERP_HR_HostAddress = http://localhost:5174
+
+### ดึงพนักงานทั้งหมด
+GET {{ERP_HR_HostAddress}}/api/employees
+Accept: application/json
+
+### ดึงพนักงานตาม id (แก้ id ให้ตรงกับที่สร้าง)
+GET {{ERP_HR_HostAddress}}/api/employees/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### สร้างพนักงานใหม่
+POST {{ERP_HR_HostAddress}}/api/employees
+Content-Type: application/json
+
+{
+  "employeeCode": "EMP001",
+  "firstName": "สมชาย",
+  "lastName": "ใจดี",
+  "firstNameEn": "Somchai",
+  "lastNameEn": "Jaidee",
+  "dateOfBirth": "1995-05-20",
+  "gender": "Male",
+  "nationalId": "1234567890123",
+  "phoneNumber": "0812345678",
+  "email": "somchai@example.com",
+  "address": "กรุงเทพฯ",
+  "hireDate": "2024-01-15",
+  "departmentId": "11111111-1111-1111-1111-111111111111",
+  "positionId": "22222222-2222-2222-2222-222222222222",
+  "branchId": "33333333-3333-3333-3333-333333333333"
+}
+
+### แก้ไขพนักงาน (แก้ id ให้ตรง)
+PUT {{ERP_HR_HostAddress}}/api/employees/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "firstName": "สมชาย",
+  "lastName": "ใจงาม",
+  "gender": "Male",
+  "email": "somchai.new@example.com",
+  "phoneNumber": "0899999999",
+  "departmentId": "11111111-1111-1111-1111-111111111111",
+  "positionId": "22222222-2222-2222-2222-222222222222",
+  "branchId": "33333333-3333-3333-3333-333333333333"
+}
+
+### ลาออก
+PATCH {{ERP_HR_HostAddress}}/api/employees/00000000-0000-0000-0000-000000000000/resign
+
+### ลบ
+DELETE {{ERP_HR_HostAddress}}/api/employees/00000000-0000-0000-0000-000000000000
