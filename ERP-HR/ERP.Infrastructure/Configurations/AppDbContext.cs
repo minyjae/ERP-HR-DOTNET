@@ -11,6 +11,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Position> Positions => Set<Position>();
     public DbSet<User> Users => Set<User>();
     public DbSet<EmployeePosition> EmployeePositions => Set<EmployeePosition>();
+    public DbSet<Holiday> Holidays => Set<Holiday>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -123,6 +124,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasIndex(ep => ep.EmployeeId, "ux_employee_positions_current")
                 .IsUnique()
                 .HasFilter("\"EndDate\" IS NULL");
+        });
+
+        modelBuilder.Entity<Holiday>(entity =>
+        {
+            entity.ToTable("holidays");
+
+            entity.HasKey(h => h.Id);
+
+            entity.Property(h => h.Name).IsRequired().HasMaxLength(150);
+
+            // ห้ามมีวันหยุดซ้ำในวันเดียวกัน
+            entity.HasIndex(h => new { h.Year, h.Date }).IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);
