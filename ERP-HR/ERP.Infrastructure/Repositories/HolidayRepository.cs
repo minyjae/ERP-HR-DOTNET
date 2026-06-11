@@ -21,6 +21,12 @@ public class HolidayRepository(AppDbContext db) : IHolidayRepository
             .OrderBy(h => h.Date)
             .ToListAsync(ct);
 
+    public async Task<List<Holiday>> GetBetweenAsync(DateOnly from, DateOnly to, CancellationToken ct = default) =>
+        await db.Holidays
+            .AsNoTracking()
+            .Where(h => h.Date >= from && h.Date <= to)
+            .ToListAsync(ct);
+
     public async Task<Holiday?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await db.Holidays.FirstOrDefaultAsync(h => h.Id == id, ct);
 

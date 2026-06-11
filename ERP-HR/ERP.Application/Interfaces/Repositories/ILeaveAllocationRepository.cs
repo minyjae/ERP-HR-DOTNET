@@ -10,6 +10,9 @@ public interface ILeaveAllocationRepository
 
     Task<LeaveAllocation?> GetByIdAsync(Guid id, CancellationToken ct = default);
 
+    /// <summary>โควต้าของ (พนักงาน, ประเภทลา, ปี) แบบ tracked — สำหรับหัก/คืนตอนอนุมัติใบลา</summary>
+    Task<LeaveAllocation?> GetByKeyAsync(Guid employeeId, Guid leaveTypeId, int year, CancellationToken ct = default);
+
     /// <summary>มีโควต้า (พนักงาน, ประเภทลา, ปี) นี้อยู่แล้วไหม — กันสร้างซ้ำ</summary>
     Task<bool> ExistsAsync(Guid employeeId, Guid leaveTypeId, int year, CancellationToken ct = default);
 

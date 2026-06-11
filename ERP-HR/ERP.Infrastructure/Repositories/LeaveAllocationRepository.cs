@@ -19,6 +19,11 @@ public class LeaveAllocationRepository(AppDbContext db) : ILeaveAllocationReposi
     public async Task<LeaveAllocation?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await db.LeaveAllocations.FirstOrDefaultAsync(la => la.Id == id, ct);
 
+    public async Task<LeaveAllocation?> GetByKeyAsync(Guid employeeId, Guid leaveTypeId, int year, CancellationToken ct = default) =>
+        // ไม่ใส่ AsNoTracking เพราะ caller (อนุมัติ/ยกเลิกใบลา) ต้องแก้ไขแล้ว SaveChanges
+        await db.LeaveAllocations.FirstOrDefaultAsync(
+            la => la.EmployeeId == employeeId && la.LeaveTypeId == leaveTypeId && la.Year == year, ct);
+
     public Task<bool> ExistsAsync(Guid employeeId, Guid leaveTypeId, int year, CancellationToken ct = default) =>
         db.LeaveAllocations.AnyAsync(
             la => la.EmployeeId == employeeId && la.LeaveTypeId == leaveTypeId && la.Year == year, ct);
