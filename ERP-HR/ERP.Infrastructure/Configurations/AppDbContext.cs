@@ -7,7 +7,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<Department> Departments => Set<Department>();
-
+    public DbSet<Branch> Branches => Set<Branch>();
+    public DbSet<Position> Positions => Set<Position>();
+    public DbSet<User> Users => Set<User>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -52,6 +54,55 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // รหัสแผนกต้องไม่ซ้ำในระบบ
             entity.HasIndex(d => d.Code).IsUnique();
+        });
+
+        modelBuilder.Entity<Branch>(entity =>
+        {
+            entity.ToTable("branches");
+
+            entity.HasKey(b => b.Id);
+
+            entity.Property(b => b.Code).IsRequired().HasMaxLength(20);
+            entity.Property(b => b.Name).IsRequired().HasMaxLength(150);
+            entity.Property(b => b.Address).HasMaxLength(500);
+            entity.Property(b => b.Phone).HasMaxLength(20);
+
+            // รหัสสาขาต้องไม่ซ้ำในระบบ
+            entity.HasIndex(b => b.Code).IsUnique();
+        });
+
+        modelBuilder.Entity<Position>(entity =>
+        {
+            entity.ToTable("positions");
+
+            entity.HasKey(p => p.Id);
+
+            entity.Property(p => p.Code).IsRequired().HasMaxLength(20);
+            entity.Property(p => p.Name).IsRequired().HasMaxLength(150);
+            entity.Property(p => p.NameEn).HasMaxLength(150);
+
+            // เก็บ enum ระดับตำแหน่งเป็น string เช่น "Senior"
+            entity.Property(p => p.Level).HasConversion<string>().HasMaxLength(20);
+
+            // รหัสตำแหน่งต้องไม่ซ้ำในระบบ
+            entity.HasIndex(p => p.Code).IsUnique();
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("users");
+
+            entity.HasKey(p => p.Id);
+
+            entity.Property(p => p.EmployeeId).IsRequired().HasMaxLength(20);
+            entity.Property(p => p.Email).IsRequired().HasMaxLength(150);
+            entity.Property(p => p.HashedPassword).IsRequired().HasMaxLength(150);
+
+            // เก็บ enum ระดับตำแหน่งเป็น string เช่น "Senior"
+            entity.Property(p => p.Role).HasConversion<string>().HasMaxLength(20);
+
+            // รหัสตำแหน่งต้องไม่ซ้ำในระบบ
+            entity.HasIndex(p => p.EmployeeId).IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);

@@ -4,6 +4,7 @@ using ERP.Application.Services;
 using ERP.Application.Validators;
 using ERP.Infrastructure.Configurations;
 using ERP.Infrastructure.Repositories;
+using ERP.Infrastructure.Security;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -21,6 +22,15 @@ builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+builder.Services.AddScoped<IBranchService, BranchService>();
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
+builder.Services.AddScoped<IPositionService, PositionService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+// hashing รหัสผ่าน — stateless ใช้ Singleton ได้
+builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
 // 3) FluentValidation — สแกนหา validator ทุกตัวใน assembly เดียวกับ CreateEmployeeRequestValidator
 builder.Services.AddValidatorsFromAssemblyContaining<CreateEmployeeRequestValidator>();
