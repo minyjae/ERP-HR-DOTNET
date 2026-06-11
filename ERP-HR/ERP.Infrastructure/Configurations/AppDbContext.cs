@@ -14,6 +14,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Holiday> Holidays => Set<Holiday>();
     public DbSet<LeaveAllocation> LeaveAllocations => Set<LeaveAllocation>();
     public DbSet<LeavePolicy> LeavePolicies => Set<LeavePolicy>();
+    public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -166,6 +167,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entity.HasIndex(p => p.LeaveTypeId, "ux_leave_policies_active")
                 .IsUnique()
                 .HasFilter("\"IsActive\" = true");
+        });
+
+        modelBuilder.Entity<LeaveType>(entity =>
+        {
+            entity.ToTable("leave_types");
+
+            entity.HasKey(lt => lt.Id);
+
+            entity.Property(lt => lt.Code).IsRequired().HasMaxLength(20);
+            entity.Property(lt => lt.Name).IsRequired().HasMaxLength(150);
+
+            // รหัสประเภทลาต้องไม่ซ้ำในระบบ
+            entity.HasIndex(lt => lt.Code).IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);
