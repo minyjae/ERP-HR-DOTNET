@@ -32,6 +32,8 @@ builder.Services.AddScoped<IEmployeePositionRepository, EmployeePositionReposito
 builder.Services.AddScoped<IEmployeePositionService, EmployeePositionService>();
 builder.Services.AddScoped<IHolidayRepository, HolidayRepository>();
 builder.Services.AddScoped<IHolidayService, HolidayService>();
+builder.Services.AddScoped<ILeaveAllocationRepository, LeaveAllocationRepository>();
+builder.Services.AddScoped<ILeaveAllocationService, LeaveAllocationService>();
 
 // hashing รหัสผ่าน — stateless ใช้ Singleton ได้
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasher>();

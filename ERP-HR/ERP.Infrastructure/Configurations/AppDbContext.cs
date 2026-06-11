@@ -12,6 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users => Set<User>();
     public DbSet<EmployeePosition> EmployeePositions => Set<EmployeePosition>();
     public DbSet<Holiday> Holidays => Set<Holiday>();
+    public DbSet<LeaveAllocation> LeaveAllocations => Set<LeaveAllocation>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -136,6 +137,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // ห้ามมีวันหยุดซ้ำในวันเดียวกัน
             entity.HasIndex(h => new { h.Year, h.Date }).IsUnique();
+        });
+
+        modelBuilder.Entity<LeaveAllocation>(entity =>
+        {
+            entity.ToTable("leave_allocations");
+
+            entity.HasKey(la => la.Id);
+
+            // RemainingDays เป็น computed property ไม่เก็บลง DB
+            entity.Ignore(la => la.RemainingDays);
+
+            // พนักงาน 1 คน มีโควต้าต่อ (ประเภทลา, ปี) ได้ทีละ 1
+            entity.HasIndex(la => new { la.EmployeeId, la.LeaveTypeId, la.Year }).IsUnique();
         });
 
         base.OnModelCreating(modelBuilder);
