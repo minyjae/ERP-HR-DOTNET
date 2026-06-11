@@ -13,6 +13,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<EmployeePosition> EmployeePositions => Set<EmployeePosition>();
     public DbSet<Holiday> Holidays => Set<Holiday>();
     public DbSet<LeaveAllocation> LeaveAllocations => Set<LeaveAllocation>();
+    public DbSet<LeavePolicy> LeavePolicies => Set<LeavePolicy>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -150,6 +151,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // พนักงาน 1 คน มีโควต้าต่อ (ประเภทลา, ปี) ได้ทีละ 1
             entity.HasIndex(la => new { la.EmployeeId, la.LeaveTypeId, la.Year }).IsUnique();
+        });
+
+        modelBuilder.Entity<LeavePolicy>(entity =>
+        {
+            entity.ToTable("leave_policies");
+
+            entity.HasKey(p => p.Id);
+
+            // index ปกติสำหรับ query ตามประเภทลา
+            entity.HasIndex(p => p.LeaveTypeId, "ix_leave_policies_leave_type");
+
+            // บังคับระดับ DB: 1 ประเภทลา มี policy ที่ active ได้ทีละ 1
+            entity.HasIndex(p => p.LeaveTypeId, "ux_leave_policies_active")
+                .IsUnique()
+                .HasFilter("\"IsActive\" = true");
         });
 
         base.OnModelCreating(modelBuilder);
