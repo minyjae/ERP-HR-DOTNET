@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Branch> Branches => Set<Branch>();
     public DbSet<Position> Positions => Set<Position>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<EmployeePosition> EmployeePositions => Set<EmployeePosition>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -103,6 +104,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // รหัสตำแหน่งต้องไม่ซ้ำในระบบ
             entity.HasIndex(p => p.EmployeeId).IsUnique();
+        });
+
+        modelBuilder.Entity<EmployeePosition>(entity =>
+        {
+            entity.ToTable("employee_positions");
+
+            entity.HasKey(ep => ep.Id);
+
+            entity.Property(ep => ep.Salary).HasPrecision(18, 2);
+            entity.Property(ep => ep.Remark).HasMaxLength(500);
+
+            // index ปกติสำหรับ query timeline ของพนักงาน
+            entity.HasIndex(ep => ep.EmployeeId, "ix_employee_positions_employee");
+
+            // บังคับระดับ DB: พนักงาน 1 คนมีตำแหน่งปัจจุบัน (EndDate = null) ได้ทีละ 1
+            // ใช้ partial unique index ของ PostgreSQL
+            entity.HasIndex(ep => ep.EmployeeId, "ux_employee_positions_current")
+                .IsUnique()
+                .HasFilter("\"EndDate\" IS NULL");
         });
 
         base.OnModelCreating(modelBuilder);
