@@ -15,6 +15,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<LeaveAllocation> LeaveAllocations => Set<LeaveAllocation>();
     public DbSet<LeavePolicy> LeavePolicies => Set<LeavePolicy>();
     public DbSet<LeaveType> LeaveTypes => Set<LeaveType>();
+    public DbSet<LeaveRequest> LeaveRequests => Set<LeaveRequest>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // กำหนด mapping ของ Employee ลง table ตรงนี้เลย ผ่าน modelBuilder
@@ -180,6 +181,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
             // รหัสประเภทลาต้องไม่ซ้ำในระบบ
             entity.HasIndex(lt => lt.Code).IsUnique();
+        });
+
+        modelBuilder.Entity<LeaveRequest>(entity =>
+        {
+            entity.ToTable("leave_requests");
+
+            entity.HasKey(r => r.Id);
+
+            entity.Property(r => r.TotalDays).HasPrecision(5, 1);
+            entity.Property(r => r.Reason).HasMaxLength(500);
+            entity.Property(r => r.AttachmentUrl).HasMaxLength(500);
+            entity.Property(r => r.RejectReason).HasMaxLength(500);
+
+            // เก็บสถานะใบลาเป็น string เช่น "Pending", "Approved"
+            entity.Property(r => r.Status).HasConversion<string>().HasMaxLength(20);
+
+            // query ใบลาตามพนักงาน/สถานะบ่อย
+            entity.HasIndex(r => new { r.EmployeeId, r.Status });
         });
 
         base.OnModelCreating(modelBuilder);

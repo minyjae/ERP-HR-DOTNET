@@ -7,6 +7,10 @@ public interface IHolidayRepository
 {
     Task<List<Holiday>> GetAllAsync(CancellationToken ct = default);
     Task<List<Holiday>> GetByYearAsync(int year, CancellationToken ct = default);
+
+    /// <summary>วันหยุดในช่วง [from, to] — ใช้ตอนคำนวณจำนวนวันลา</summary>
+    Task<List<Holiday>> GetBetweenAsync(DateOnly from, DateOnly to, CancellationToken ct = default);
+
     Task<Holiday?> GetByIdAsync(Guid id, CancellationToken ct = default);
 
     /// <summary>มีวันหยุดในวันนี้อยู่แล้วไหม (กันบันทึกซ้ำ)</summary>

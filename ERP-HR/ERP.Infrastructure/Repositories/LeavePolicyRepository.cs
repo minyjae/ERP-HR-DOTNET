@@ -22,6 +22,11 @@ public class LeavePolicyRepository(AppDbContext db) : ILeavePolicyRepository
     public async Task<LeavePolicy?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await db.LeavePolicies.FirstOrDefaultAsync(p => p.Id == id, ct);
 
+    public async Task<LeavePolicy?> GetActiveByLeaveTypeAsync(Guid leaveTypeId, CancellationToken ct = default) =>
+        await db.LeavePolicies
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.LeaveTypeId == leaveTypeId && p.IsActive, ct);
+
     public Task<bool> HasActivePolicyAsync(Guid leaveTypeId, Guid? excludeId, CancellationToken ct = default) =>
         db.LeavePolicies.AnyAsync(
             p => p.LeaveTypeId == leaveTypeId
